@@ -1,0 +1,8 @@
+{
+  "name": "Remix Mitra.AI Chat",
+  "description": "Clean, conversational AI chatbot with adaptable assistant personalities, real-time streaming, and rich markdown formatting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
