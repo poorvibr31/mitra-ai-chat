@@ -12,6 +12,7 @@ export interface Personality {
   welcomeMessage: string;
   starters: string[];
   toneTraits: string[];
+  quickReplies: string[];
 }
 
 export interface ChatMessage {

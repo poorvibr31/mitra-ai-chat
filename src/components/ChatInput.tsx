@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Send, Square, Mic, MicOff, Sparkles, CornerDownLeft } from 'lucide-react';
+import { Send, Square, Mic, MicOff, Sparkles, CornerDownLeft, Zap } from 'lucide-react';
 import { Personality } from '../types';
 
 interface ChatInputProps {
@@ -90,30 +90,32 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  const quickActionChips = [
-    { label: 'Summarize', prompt: 'Please summarize the key points of our discussion.' },
-    { label: 'Explain simply', prompt: 'Can you explain this in simpler terms with a relatable analogy?' },
-    { label: 'Step-by-step', prompt: 'Break down the solution into clear, actionable steps.' },
-    { label: 'Critique & improve', prompt: 'What are the potential drawbacks or areas for improvement here?' },
-  ];
+  const quickRepliesList = personality.quickReplies && personality.quickReplies.length > 0
+    ? personality.quickReplies
+    : [
+        'Tell me more about that 😊',
+        'Can you give me an example?',
+        'Summarize the key points',
+        'What are the next steps?',
+      ];
 
   return (
     <div className="w-full bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent dark:from-slate-950 dark:via-slate-950 dark:to-transparent pt-3 pb-4 px-4 sm:px-6 transition-colors">
       <div className="mx-auto max-w-4xl space-y-2">
         {/* Quick helper pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
-          <span className="flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 shrink-0">
-            <Sparkles className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
-            <span>Quick:</span>
+          <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 shrink-0">
+            <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+            <span>Quick replies:</span>
           </span>
-          {quickActionChips.map((chip, idx) => (
+          {quickRepliesList.map((replyPrompt, idx) => (
             <button
               key={idx}
-              onClick={() => onSend(chip.prompt)}
+              onClick={() => onSend(replyPrompt)}
               disabled={isStreaming}
-              className="rounded-full bg-white border border-slate-200 px-2.5 py-1 text-[11px] text-slate-700 shadow-xs transition-colors hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white disabled:opacity-40 shrink-0"
+              className="rounded-full bg-white border border-slate-200 px-3 py-1 text-xs text-slate-700 shadow-xs transition-all hover:border-indigo-400 hover:bg-indigo-50/70 hover:text-indigo-600 dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-300 dark:hover:border-indigo-500/60 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-300 disabled:opacity-40 shrink-0 cursor-pointer active:scale-95"
             >
-              {chip.label}
+              {replyPrompt}
             </button>
           ))}
         </div>

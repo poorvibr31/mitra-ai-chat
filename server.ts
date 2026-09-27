@@ -189,8 +189,10 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
   res.flushHeaders?.();
 
   let isClientClosed = false;
-  req.on('close', () => {
-    isClientClosed = true;
+  res.on('close', () => {
+    if (!res.writableEnded) {
+      isClientClosed = true;
+    }
   });
 
   const ai = getAiClient();
@@ -219,10 +221,10 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
   const temperature = activePersona.id === 'tech' ? 0.2 : activePersona.id === 'storyteller' ? 0.9 : 0.7;
 
   // Candidate models conforming to gemini-api skill:
-  // Primary 'gemini-3.8-flash', resilient fallback 'gemini-3.1-flash-lite', then 'gemini-flash-latest'
+  // Ultra-fast 'gemini-3.1-flash-lite' for instantaneous quick responses, falling back to 'gemini-3.8-flash', then 'gemini-flash-latest'
   const candidateModels = [
-    'gemini-3.8-flash',
     'gemini-3.1-flash-lite',
+    'gemini-3.8-flash',
     'gemini-flash-latest',
   ];
 
@@ -233,49 +235,37 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
   for (const modelName of candidateModels) {
     if (streamCompleted || isClientClosed) break;
 
-    // Retry transient errors per candidate model
-    for (let attempt = 0; attempt < 2; attempt++) {
-      if (streamCompleted || isClientClosed) break;
+    try {
+      const stream = await ai.models.generateContentStream({
+        model: modelName,
+        contents: formattedContents,
+        config: {
+          systemInstruction: systemPrompt,
+          temperature,
+        },
+      });
 
-      try {
-        const stream = await ai.models.generateContentStream({
-          model: modelName,
-          contents: formattedContents,
-          config: {
-            systemInstruction: systemPrompt,
-            temperature,
-          },
-        });
-
-        for await (const chunk of stream) {
-          if (isClientClosed) break;
-          const chunkText = chunk.text;
-          if (chunkText) {
-            res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
-            totalChunksEmitted++;
-          }
-        }
-
-        streamCompleted = true;
-        break;
-      } catch (err: unknown) {
-        lastError = err;
-        console.warn(`Model ${modelName} (attempt ${attempt + 1}) error:`, cleanErrorMessage(err));
-
-        // If chunks were already written to client, do not restart
-        if (totalChunksEmitted > 0) {
-          break;
-        }
-
-        // Brief delay before retry or fallback
-        if (attempt === 0) {
-          await new Promise((resolve) => setTimeout(resolve, 350));
+      for await (const chunk of stream) {
+        if (isClientClosed) break;
+        const chunkText = chunk.text;
+        if (chunkText) {
+          res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
+          totalChunksEmitted++;
         }
       }
-    }
 
-    if (totalChunksEmitted > 0) {
-      break;
+      if (totalChunksEmitted > 0) {
+        streamCompleted = true;
+        break;
+      }
+    } catch (err: unknown) {
+      lastError = err;
+      console.warn(`Model ${modelName} stream error:`, cleanErrorMessage(err));
+
+      // If chunks were already written to client, do not restart mid-stream
+      if (totalChunksEmitted > 0) {
+        break;
+      }
     }
   }
 
@@ -284,7 +274,7 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
     res.write(`data: ${JSON.stringify({ error: friendlyError })}\n\n`);
   }
 
-  if (!isClientClosed) {
+  if (!isClientClosed && !res.writableEnded) {
     res.write('data: [DONE]\n\n');
     res.end();
   }

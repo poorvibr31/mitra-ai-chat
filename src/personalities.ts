@@ -23,7 +23,13 @@ Key characteristics:
       "I need a good weekend movie or book recommendation",
       "Help me write a friendly text to check in on an old friend"
     ],
-    toneTraits: ['Empathetic', 'Relaxed', 'Encouraging', 'Conversational']
+    toneTraits: ['Empathetic', 'Relaxed', 'Encouraging', 'Conversational'],
+    quickReplies: [
+      "Tell me more about that 😊",
+      "What do you suggest?",
+      "Can you give me a fun example?",
+      "How should I get started?"
+    ]
   },
   {
     id: 'tech',
@@ -47,7 +53,13 @@ Key characteristics:
       "Design a scalable rate-limiting system using Redis and sliding window",
       "Review this pseudo-algorithm for detecting cycle in a graph"
     ],
-    toneTraits: ['Precise', 'Analytical', 'Modern Standards', 'Architecture-first']
+    toneTraits: ['Precise', 'Analytical', 'Modern Standards', 'Architecture-first'],
+    quickReplies: [
+      "Show code implementation with TypeScript 💻",
+      "What are the performance trade-offs?",
+      "How do I handle edge cases & errors?",
+      "What is the industry best practice?"
+    ]
   },
   {
     id: 'storyteller',
@@ -71,7 +83,13 @@ Key characteristics:
       "Help me develop a villain who genuinely believes they are saving humanity",
       "Describe an ancient bookstore tucked between two dimensions"
     ],
-    toneTraits: ['Evocative', 'Imaginative', 'Atmospheric', 'Poetic']
+    toneTraits: ['Evocative', 'Imaginative', 'Atmospheric', 'Poetic'],
+    quickReplies: [
+      "What happens next in the story? ✨",
+      "Describe the atmosphere in sensory detail 🌌",
+      "Introduce an unexpected plot twist 🎭",
+      "Write dialogue between the characters"
+    ]
   },
   {
     id: 'tutor',
@@ -95,7 +113,13 @@ Key characteristics:
       "Test my understanding of Object-Oriented vs Functional programming",
       "Explain Bayes' Theorem using a simple medical diagnosis scenario"
     ],
-    toneTraits: ['Inquisitive', 'Patient', 'Analogical', 'Insightful']
+    toneTraits: ['Inquisitive', 'Patient', 'Analogical', 'Insightful'],
+    quickReplies: [
+      "Can you give me a practice problem? 📝",
+      "Explain this with a simple analogy 🍎",
+      "Break this down step-by-step 🔍",
+      "Ask me a question to test my understanding ❓"
+    ]
   },
   {
     id: 'executive',
@@ -119,7 +143,13 @@ Key characteristics:
       "Prioritize these 4 competing project deadlines using an impact/effort matrix",
       "Draft a concise email to stakeholders announcing a 2-week launch delay"
     ],
-    toneTraits: ['Direct', 'Structured', 'BLUF Format', 'Zero Fluff']
+    toneTraits: ['Direct', 'Structured', 'BLUF Format', 'Zero Fluff'],
+    quickReplies: [
+      "Summarize this in 3 bullet points 📊",
+      "What are the key ROI and risks? 📈",
+      "What is the immediate action plan? 🎯",
+      "Draft the stakeholder update ✉️"
+    ]
   }
 ];
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Copy, Check, Volume2, VolumeX, RotateCcw, AlertTriangle, User } from 'lucide-react';
+import { Copy, Check, Volume2, VolumeX, RotateCcw, AlertTriangle, User, Zap, ArrowRight } from 'lucide-react';
 import { ChatMessage, Personality } from '../types';
 import { CodeBlock } from './CodeBlock';
 
@@ -10,6 +10,7 @@ interface ChatMessageItemProps {
   personality: Personality;
   isLastAssistant: boolean;
   onRegenerate?: () => void;
+  onQuickReply?: (prompt: string) => void;
 }
 
 export const ChatMessageItem: React.FC<ChatMessageItemProps> = ({
@@ -17,6 +18,7 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = ({
   personality,
   isLastAssistant,
   onRegenerate,
+  onQuickReply,
 }) => {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
@@ -270,6 +272,28 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = ({
                 <span>Regenerate</span>
               </button>
             )}
+          </div>
+        )}
+
+        {/* Quick replies for the latest completed assistant response */}
+        {isLastAssistant && !message.isStreaming && !message.error && onQuickReply && personality.quickReplies && personality.quickReplies.length > 0 && (
+          <div className="mt-3.5 pt-3 border-t border-slate-200/70 dark:border-slate-800/70">
+            <div className="flex items-center gap-1.5 mb-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/20" />
+              <span>Quick replies:</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {personality.quickReplies.map((replyText, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => onQuickReply(replyText)}
+                  className="group/btn inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-3 py-1.5 text-xs text-slate-700 shadow-xs transition-all hover:border-indigo-400 hover:bg-indigo-50/70 hover:text-indigo-600 dark:border-slate-700/80 dark:bg-slate-900/90 dark:text-slate-300 dark:hover:border-indigo-500/70 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-300 cursor-pointer active:scale-95"
+                >
+                  <span>{replyText}</span>
+                  <ArrowRight className="h-3 w-3 text-slate-400 opacity-60 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:opacity-100 group-hover/btn:text-indigo-500" />
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>

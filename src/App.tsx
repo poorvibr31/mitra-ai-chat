@@ -519,6 +519,7 @@ export default function App() {
                     personality={messagePersona}
                     isLastAssistant={isLastAssistant}
                     onRegenerate={handleRegenerate}
+                    onQuickReply={(prompt) => handleSendMessage(prompt)}
                   />
                 );
               })}
